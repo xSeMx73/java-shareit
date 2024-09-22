@@ -53,7 +53,8 @@ public class ItemRepository {
               .toList();
     }
 
-    public List<ItemDto> findItemForText(String text) {
+    public List<ItemDto> findItemForText(String text,Long userId) {
+        userService.getUserById(userId);
         return List.copyOf(items.values()).stream()
                 .filter(Item::getAvailable)
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())

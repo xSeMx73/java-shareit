@@ -9,10 +9,6 @@ import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -51,9 +47,9 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> findItemForText(@RequestParam(required = false) String text) {
+    public List<ItemDto> findItemForText(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(name = "text", required = false) String text) {
         log.info("Запрос вещи по описанию - {}", text);
-        return itemService.findItemForText(text);
+        return itemService.findItemForText(text, userId);
     }
 
 }

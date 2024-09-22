@@ -58,8 +58,8 @@ public class ItemServiceImp implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findItemForText(String text) {
+    public List<ItemDto> findItemForText(String text,Long userId) {
         if (text.isBlank()) return new ArrayList<>();
-        return itemRepository.findItemForText(text);
+        return itemRepository.findItemForText(text,userId);
     }
 }
