@@ -13,6 +13,8 @@ import ru.practicum.shareit.user.model.User;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
     Long id;
     @Size(max = 100)

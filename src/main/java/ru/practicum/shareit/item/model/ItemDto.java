@@ -12,6 +12,8 @@ import ru.practicum.shareit.request.ItemRequest;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemDto {
     Long id;
     @Size(max = 100)
