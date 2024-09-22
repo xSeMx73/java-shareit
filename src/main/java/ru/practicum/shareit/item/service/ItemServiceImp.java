@@ -1,10 +1,11 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.InternalException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.ItemDto;
 import ru.practicum.shareit.item.model.ItemDtoForOwner;
 
@@ -32,10 +33,11 @@ public class ItemServiceImp implements ItemService {
 
     @Override
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long userId) {
-        if (!itemRepository.items.containsKey(itemId)) {
+        if (!itemRepository.getItems().containsKey(itemId)) {
             throw new NotFoundException("Вещи с таким id не существует");
         }
-        if (!Objects.equals(itemRepository.items.get(itemId).getOwner().getId(), userId)) throw new NotFoundException("Попытка обновить не свою вещь");
+        if (!Objects.equals(itemRepository.getItems().get(itemId).getOwner().getId(), userId))
+            throw new NotFoundException("Попытка обновить не свою вещь");
        itemDto.setId(itemId);
        itemDto = itemRepository.updateItem(itemDto, itemId);
         return itemDto;
@@ -43,8 +45,11 @@ public class ItemServiceImp implements ItemService {
 
     @Override
     public ItemDto getItem(Long itemId) {
-        if (id < itemId) throw new NotFoundException("Вещи с таким id не существует");
-        return itemRepository.getItem(itemId);
+        ItemDto itemDto = itemRepository.getItem(itemId);
+        if (itemDto == null) {
+            throw new NotFoundException("Вещи с таким id не существует");
+        }
+        return itemDto;
     }
 
     @Override

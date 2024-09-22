@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @Repository
 public class UserRepository {
 
-  HashMap<Long,User> users = new HashMap<>();
+    HashMap<Long, User> users = new HashMap<>();
 
     public User createUser(User user) {
         users.put(user.getId(), user);
@@ -27,7 +28,7 @@ public class UserRepository {
     }
 
 
-    public User updateUser(User user,Long id) {
+    public User updateUser(User user, Long id) {
         User user1 = getUserById(id).orElse(user);
         if (user.getEmail() != null && user.getEmail().contains("@")) user1.setEmail(user.getEmail());
         if (user.getName() != null) user1.setName(user.getName());
