@@ -1,10 +1,12 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.InternalServerException;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.util.HashMap;
 
@@ -56,9 +58,6 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void deleteUser(long id) {
-        if (userRepository.getUserById(id).isEmpty()) {
-            throw new NotFoundException("Пользователь c ID - " + id + " не найден");
-        }
         emails.remove(id);
         userRepository.deleteUser(id);
     }

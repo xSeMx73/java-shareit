@@ -1,12 +1,10 @@
 package ru.practicum.shareit.item.model;
 
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 /**
  * TODO Sprint add-controllers.
@@ -14,14 +12,14 @@ import ru.practicum.shareit.user.User;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Item {
-    private Long id;
-    private String name;
-    @Size(max = 400)
-    private String description;
-    private Boolean available;
-    private User owner;
-    private ItemRequest request;
+    Long id;
+    @Size(max = 100)
+    String name;
+    @Size(max = 500)
+    String description;
+    Boolean available;
+    User owner;
+    ItemRequest request;
 }
