@@ -3,7 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 @Slf4j
@@ -15,25 +15,25 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public UserDto createUser(@RequestBody UserDto userDto) {
         log.info("Создание пользователя");
-        user = userService.createUser(user);
-        log.info("Создан пользователь - {}", user);
-        return user;
+        userDto = userService.createUserDto(userDto);
+        log.info("Создан пользователь - {}", userDto);
+        return userDto;
     }
 
     @GetMapping("/{userID}")
-    public User getUserById(@PathVariable("userID") long id) {
+    public UserDto getUserById(@PathVariable("userID") long id) {
         log.info("Запрошен пользователь с ID - {}", id);
         return userService.getUserById(id);
     }
 
     @PatchMapping("/{userID}")
-    public User updateUser(@RequestBody User user, @PathVariable("userID") long id) {
-        log.info("Обновление пользователя");
-        user = userService.update(user, id);
-        log.info("Обновлен пользователь - {}", user);
-        return user;
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable("userID") long id) {
+        log.info("Обновление пользователя {}", userDto);
+        userDto = userService.update(userDto, id);
+        log.info("Обновлен пользователь - {}", userDto);
+        return userDto;
     }
 
     @DeleteMapping("/{userID}")

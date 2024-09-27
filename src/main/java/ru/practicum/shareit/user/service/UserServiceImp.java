@@ -1,12 +1,14 @@
 package ru.practicum.shareit.user.service;
 
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.InternalServerException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.UserDto;
+import ru.practicum.shareit.user.model.UserMapper;
 
 import java.util.HashMap;
 
@@ -15,45 +17,47 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class UserServiceImp implements UserService {
     HashMap<Long, String> emails = new HashMap<>();
-    Long id = 0L;
+
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
-    public User createUser(User user) {
-        if (user.getEmail() == null) throw new InternalServerException("email должен быть указан");
-        if (emails.containsValue(user.getEmail()) || !user.getEmail().contains("@"))
-            throw new InternalServerException("Пользователь с таким email уже существует");
-        user.setId(++id);
-        emails.put(user.getId(), user.getEmail());
-        userRepository.createUser(user);
-        if (user.getId() == null) {
+    public UserDto createUserDto(UserDto userDto) {
+        if (userDto.getEmail() == null) throw new ValidationException("email должен быть указан");
+        if (emails.containsValue(userDto.getEmail()) || !userDto.getEmail().contains("@"))
+            throw new ValidationException("Пользователь с таким email уже существует");
+        userDto = userMapper.toUserDto(userRepository.createUser(userMapper.toUser(userDto)));
+        if (userDto.getId() == null) {
             throw new InternalServerException("Не удалось сохранить данные");
         }
-        log.info("Пользователь {} создан с id = {}", user.getName(), user.getId());
-        return user;
+        emails.put(userDto.getId(), userDto.getEmail());
+        return userDto;
     }
 
     @Override
-    public User getUserById(long id) {
-        return userRepository.getUserById(id).orElseThrow(() -> new NotFoundException(
-                "Пользователь c ID - " + id + " не найден"));
+    public UserDto getUserById(long id) {
+        return userMapper.toUserDto(userRepository.getUserById(id).orElseThrow(() -> new NotFoundException(
+                "Пользователь c ID - " + id + " не найден")));
     }
 
     @Override
-    public User update(User user, Long id) {
-        if (userRepository.getUserById(id).isEmpty()) throw new NotFoundException(
-                "Пользователь c ID - " + id + " не найден");
-        emails.remove(id);
-        if (user.getEmail() != null) {
-            if (emails.containsValue(user.getEmail())) {
-                throw new InternalServerException("Пользователь с таким email уже существует");
+    public UserDto update(UserDto newUserDto, Long id) {
+        UserDto oldUserDto = getUserById(id);
+        if (newUserDto.getEmail() != null) {
+            emails.remove(id);
+            if (emails.containsValue(newUserDto.getEmail())) {
+                throw new ValidationException("Пользователь с таким email уже существует");
+            } else if (newUserDto.getEmail().contains("@")) {
+                oldUserDto.setEmail(newUserDto.getEmail());
+            } else {
+                throw new ValidationException("Неверный email");
             }
         }
-        user = userRepository.updateUser(user, id);
-        user.setId(id);
-        emails.put(id, user.getEmail());
-        return user;
-
+        if (newUserDto.getName() != null) oldUserDto.setName(newUserDto.getName());
+        oldUserDto.setId(id);
+        newUserDto = userMapper.toUserDto(userRepository.updateUser(userMapper.toUser(oldUserDto)));
+        emails.put(id, newUserDto.getEmail());
+        return newUserDto;
     }
 
     @Override
