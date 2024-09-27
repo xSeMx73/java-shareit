@@ -3,11 +3,11 @@ package ru.practicum.shareit.item.model;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.item.model.comment.CommentDto;
 import ru.practicum.shareit.request.ItemRequest;
 
-/**
- * TODO Sprint add-controllers.
- */
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -20,7 +20,9 @@ public class ItemDto {
     String name;
     @Size(max = 500)
     String description;
+    LocalDateTime lastBooking;
+    LocalDateTime nextBooking;
     Boolean available;
     ItemRequest request;
-
+    List<CommentDto> comments;
 }
