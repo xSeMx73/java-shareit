@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.model;
 
 import jakarta.validation.constraints.Email;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
