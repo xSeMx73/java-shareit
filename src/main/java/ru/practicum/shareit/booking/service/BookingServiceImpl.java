@@ -25,20 +25,20 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-   private final BookingRepository bookingRepository;
-   private final BookingMapper bookingMapper;
-   private final UserService userService;
-   private final ItemService itemService;
+    private final BookingRepository bookingRepository;
+    private final BookingMapper bookingMapper;
+    private final UserService userService;
+    private final ItemService itemService;
 
 
     @Override
     public BookingDto createBooking(BookingDto bookingDto, Long userId) {
-     UserDto booker = userService.getUserById(userId);
-      ItemDto itemDto = itemService.getItem(bookingDto.getItemId());
-      if (!itemDto.getAvailable()) throw new ItemNotAvailableException("Вещь не доступна для бронирования");
-      if (bookingDto.getStart().isAfter(bookingDto.getEnd()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
-          throw new IllegalArgumentException("Неверно задано время бронирования");
-}
+        UserDto booker = userService.getUserById(userId);
+        ItemDto itemDto = itemService.getItem(bookingDto.getItemId());
+        if (!itemDto.getAvailable()) throw new ItemNotAvailableException("Вещь не доступна для бронирования");
+        if (bookingDto.getStart().isAfter(bookingDto.getEnd()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
+            throw new IllegalArgumentException("Неверно задано время бронирования");
+        }
         bookingDto.setBooker(booker);
         bookingDto.setItem(itemDto);
         bookingDto = bookingMapper.toBookingDto(bookingRepository.save(bookingMapper.toBooking(bookingDto)));
@@ -47,38 +47,38 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto approveBooking(Long bookingId, String approved, Long userId) {
-    BookingDto bookingDto = getBookingForId(bookingId, userId);
-    if (!Objects.equals(itemService.findOwnerIdByItemId(bookingDto.getItem().getId()), userId)) {
-       throw new ValidationException("Попытка изменить статус брони не своей вещи");
-    }
-    if (approved.equals("true"))  {
-        bookingDto.setStatus(Booking.BookingStatus.APPROVED);
-    } else if (approved.equals("false")) {
-        bookingDto.setStatus(Booking.BookingStatus.REJECTED);
+    public BookingDto approveBooking(Long bookingId, Boolean approved, Long userId) {
+        BookingDto bookingDto = getBookingForId(bookingId, userId);
+        if (!Objects.equals(itemService.findOwnerIdByItemId(bookingDto.getItem().getId()), userId)) {
+            throw new ValidationException("Попытка изменить статус брони не своей вещи");
+        }
+        if (approved) {
+            bookingDto.setStatus(Booking.BookingStatus.APPROVED);
         } else {
-        throw new IllegalArgumentException("Ошибка подтверждения брони");
-    }
-    bookingRepository.save(bookingMapper.toBooking(bookingDto));
+            bookingDto.setStatus(Booking.BookingStatus.REJECTED);
+
+        }
+        bookingRepository.save(bookingMapper.toBooking(bookingDto));
         return bookingDto;
     }
 
     @Override
     public BookingDto getBookingForId(Long bookingId, Long userId) {
         userService.getUserById(userId);
-        BookingDto bookingDto = bookingMapper.toBookingDto(bookingRepository.findById(bookingId).orElseThrow(() -> new ItemNotAvailableException("Неверный ID бронирования")));
+        BookingDto bookingDto = bookingMapper.toBookingDto(bookingRepository.findById(bookingId).orElseThrow(() ->
+                new ItemNotAvailableException("Неверный ID бронирования")));
         if (!bookingDto.getBooker().getId().equals(userId) &&
             !itemService.findOwnerIdByItemId(bookingDto.getItem().getId()).equals(userId)) {
             throw new ValidationException("Информация по бронированию недоступна для данного пользователя");
         }
-            return bookingDto;
+        return bookingDto;
     }
 
     @Override
     public List<BookingDto> getUserBookings(Booking.BookingState state, Long userId) {
         userService.getUserById(userId);
         List<Booking> userBookings = bookingRepository.findAllByBookerId(userId);
-       return bookingFilter(userBookings, state);
+        return bookingFilter(userBookings, state);
     }
 
     @Override
@@ -93,26 +93,32 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> userBookingsTemp = userBookings;
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
-            case ALL : break;
-            case CURRENT: userBookingsTemp = userBookings.stream()
-                    .filter(b -> b.getStart().isBefore(now) && b.getEnd().isAfter(now))
-                    .toList();
+            case ALL:
                 break;
-            case PAST: userBookingsTemp = userBookings.stream()
-                    .filter(b -> b.getEnd().isBefore(now))
-                    .toList();
+            case CURRENT:
+                userBookingsTemp = userBookings.stream()
+                        .filter(b -> b.getStart().isBefore(now) && b.getEnd().isAfter(now))
+                        .toList();
                 break;
-            case FUTURE: userBookingsTemp = userBookings.stream()
-                    .filter(b -> b.getStart().isAfter(now))
-                    .toList();
+            case PAST:
+                userBookingsTemp = userBookings.stream()
+                        .filter(b -> b.getEnd().isBefore(now))
+                        .toList();
                 break;
-            case WAITING: userBookingsTemp = userBookings.stream()
-                    .filter(b -> b.getStatus().equals(Booking.BookingStatus.WAITING))
-                    .toList();
+            case FUTURE:
+                userBookingsTemp = userBookings.stream()
+                        .filter(b -> b.getStart().isAfter(now))
+                        .toList();
                 break;
-            case REJECTED: userBookingsTemp = userBookings.stream()
-                    .filter(b -> b.getStatus().equals(Booking.BookingStatus.REJECTED))
-                    .toList();
+            case WAITING:
+                userBookingsTemp = userBookings.stream()
+                        .filter(b -> b.getStatus().equals(Booking.BookingStatus.WAITING))
+                        .toList();
+                break;
+            case REJECTED:
+                userBookingsTemp = userBookings.stream()
+                        .filter(b -> b.getStatus().equals(Booking.BookingStatus.REJECTED))
+                        .toList();
                 break;
 
         }
