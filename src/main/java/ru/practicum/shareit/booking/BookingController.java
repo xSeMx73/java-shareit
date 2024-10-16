@@ -48,7 +48,7 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDto> getUserBookings(@RequestParam(defaultValue = "ALL") Booking.BookingState state,
+    public List<BookingDto> getUserBookings(@RequestParam(name = "state", defaultValue = "ALL") Booking.BookingState state,
                                             @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Запрос бронирований пользователя с ID : {}", userId);
         List<BookingDto> bookingDtoList = bookingService.getUserBookings(state, userId);
@@ -57,7 +57,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getOwnerItemsBookings(@RequestParam(defaultValue = "ALL") Booking.BookingState state,
+    public List<BookingDto> getOwnerItemsBookings(@RequestParam(name = "state", defaultValue = "ALL") Booking.BookingState state,
                                                   @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Запрос бронирований своих вещей пользователя с ID : {}", userId);
         List<BookingDto> bookingDtoList = bookingService.getOwnerItemsBookings(state, userId);
