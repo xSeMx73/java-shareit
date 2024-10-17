@@ -22,7 +22,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = """
             select b.ID, START_DATE, END_DATE, ITEM_ID, BOOKER_ID, STATUS
             from bookings as b
-            join public.items as it on b.item_id = it.id
-            where  BOOKER_ID = :userId and it.id = :itemId""", nativeQuery = true)
+            where  BOOKER_ID = ?1 and ITEM_ID = ?2""", nativeQuery = true)
     List<Booking> findAllByBookerIdAndItemId(Long userId, Long itemId);
 }
