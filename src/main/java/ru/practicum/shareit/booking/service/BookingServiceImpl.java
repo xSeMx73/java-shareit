@@ -33,12 +33,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto createBooking(BookingDto bookingDto, Long userId) {
-        UserDto booker = userService.getUserById(userId);
-        ItemDto itemDto = itemService.getItem(bookingDto.getItemId());
-        if (!itemDto.getAvailable()) throw new ItemNotAvailableException("Вещь не доступна для бронирования");
         if (bookingDto.getStart().isAfter(bookingDto.getEnd()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
             throw new IllegalArgumentException("Неверно задано время бронирования");
         }
+        UserDto booker = userService.getUserById(userId);
+        ItemDto itemDto = itemService.getItem(bookingDto.getItemId());
+        if (!itemDto.getAvailable()) throw new ItemNotAvailableException("Вещь не доступна для бронирования");
         bookingDto.setBooker(booker);
         bookingDto.setItem(itemDto);
         bookingDto = bookingMapper.toBookingDto(bookingRepository.save(bookingMapper.toBooking(bookingDto)));
@@ -89,7 +89,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingFilter(userBookings, state);
     }
 
-    public List<BookingDto> bookingFilter(List<Booking> userBookings, Booking.BookingState state) {
+    private List<BookingDto> bookingFilter(List<Booking> userBookings, Booking.BookingState state) {
         List<Booking> userBookingsTemp = userBookings;
         LocalDateTime now = LocalDateTime.now();
         switch (state) {

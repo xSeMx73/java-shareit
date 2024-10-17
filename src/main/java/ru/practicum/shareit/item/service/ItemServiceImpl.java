@@ -125,9 +125,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto createComment(CommentDto commentDto, Long userId, Long itemId) {
-        List<Booking> userBookings = bookingRepository.findAllByBookerId(userId);
+        userService.getUserById(userId);
+        getItem(itemId);
+        List<Booking> userBookings = bookingRepository.findAllByBookerIdAndItemId(userId, itemId);
         userBookings.stream()
-                .filter(b -> b.getBooker().getId().equals(userId))
                 .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
                 .findFirst().orElseThrow(() -> new ItemNotAvailableException("Комментирование вещи недоступно"));
         Comment comment = commentMapper.toComment(commentDto);
