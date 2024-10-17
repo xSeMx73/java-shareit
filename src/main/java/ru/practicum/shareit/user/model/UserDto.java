@@ -1,5 +1,7 @@
 package ru.practicum.shareit.user.model;
 
+
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,5 +13,6 @@ import lombok.experimental.FieldDefaults;
 public class UserDto {
     Long id;
     String name;
+    @Email(message = "Некорректный email")
     String email;
 }
