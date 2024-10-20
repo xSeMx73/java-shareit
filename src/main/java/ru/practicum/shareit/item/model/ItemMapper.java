@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.model;
 
 import org.mapstruct.Mapper;
 
-
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
 
