@@ -1,27 +1,26 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.request.model;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.item.model.comment.CommentDto;
+import ru.practicum.shareit.item.model.ItemDtoForRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemDto {
+public class ItemRequestDtoForOwner {
+
+    List<ItemDtoForRequest> items;
     Long id;
-    @Size(max = 100)
-    String name;
+    @NotNull
     @Size(max = 500)
     String description;
-    LocalDateTime lastBooking;
-    LocalDateTime nextBooking;
-    Boolean available;
-    Long requestId;
-    List<CommentDto> comments;
+    LocalDateTime created;
+
 }

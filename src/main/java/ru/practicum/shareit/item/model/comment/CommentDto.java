@@ -17,5 +17,5 @@ public class CommentDto {
     @Size(max = 500)
     String text;
     @Builder.Default
-    LocalDateTime created = LocalDateTime.now();
+   final LocalDateTime created = LocalDateTime.now();
 }

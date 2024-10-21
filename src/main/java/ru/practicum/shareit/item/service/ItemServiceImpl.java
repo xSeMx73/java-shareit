@@ -13,12 +13,13 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemDto;
 import ru.practicum.shareit.item.model.ItemDtoForOwner;
-import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.model.comment.Comment;
 import ru.practicum.shareit.item.model.comment.CommentDto;
 import ru.practicum.shareit.item.model.comment.CommentMapper;
+import ru.practicum.shareit.item.model.mapper.ItemMapper;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -39,6 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingMapper bookingMapper;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+    private final ItemRequestService requestService;
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
@@ -47,8 +49,14 @@ public class ItemServiceImpl implements ItemService {
         }
         Item item = itemMapper.toItem(itemDto);
         item.setOwner(userMapper.toUser(userService.getUserByIdForCreate(userId)));
-        itemRepository.save(item);
-        return itemMapper.toItemDto(item);
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(requestService.getRequestByIdForCreateItem(itemDto.getRequestId()));
+        }
+        itemDto = itemMapper.toItemDto(itemRepository.save(item));
+        if (item.getRequest() != null) {
+            itemDto.setRequestId(item.getRequest().getId());
+        }
+        return itemDto;
     }
 
     @Override
@@ -59,6 +67,9 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getName() != null) item.setName(itemDto.getName());
         if (itemDto.getDescription() != null) item.setDescription(itemDto.getDescription());
         if (itemDto.getAvailable() != null) item.setAvailable(itemDto.getAvailable());
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(requestService.getRequestByIdForCreateItem(itemDto.getRequestId()));
+        }
         return itemMapper.toItemDto(item);
     }
 
