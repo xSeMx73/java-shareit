@@ -67,9 +67,9 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getAllRequests() {
-        ItemRequestDto result = itemRequestService.createRequest(itemRequest, userDto.getId());
-        ItemRequestDto result2 = itemRequestService.createRequest(itemRequest2, userDto.getId());
-        ItemRequestDto result3 = itemRequestService.createRequest(itemRequest3, userDto2.getId());
+        itemRequestService.createRequest(itemRequest, userDto.getId());
+        itemRequestService.createRequest(itemRequest2, userDto.getId());
+        itemRequestService.createRequest(itemRequest3, userDto2.getId());
         List<ItemRequestDto> itemRequestList = itemRequestService.getAllRequests(userDto.getId());
         List<ItemRequestDto> itemRequestList2 = itemRequestService.getAllRequests(userDto2.getId());
         assertEquals(itemRequestList.size(), 1);
