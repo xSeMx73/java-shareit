@@ -30,7 +30,7 @@ class BookingControllerTest {
 
     @Mock
     private BookingService bookingService;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @InjectMocks
     private BookingController bookingController;
