@@ -41,9 +41,6 @@ class ItemControllerTest {
     @Mock
     private ItemService itemService;
 
-    @Mock
-    private UserService userService;
-
     @InjectMocks
     private ItemController itemController;
 
