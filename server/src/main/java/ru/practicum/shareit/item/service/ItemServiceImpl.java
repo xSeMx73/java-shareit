@@ -3,7 +3,9 @@ package ru.practicum.shareit.item.service;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingDto;
 import ru.practicum.shareit.booking.model.BookingMapper;
@@ -76,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItem(Long itemId) {
         ItemDto itemDto = itemMapper.toItemDto(itemRepository.findById(itemId).orElseThrow(() ->
-                new NotFoundException("Вещи с таким id не существует")));
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Вещи с id " + itemId + " не существует")));
         List<Comment> comments = commentRepository.findAllByItemId(itemId);
         itemDto.setComments(comments.stream().map(commentMapper::toCommentDto).toList());
         return itemDto;
