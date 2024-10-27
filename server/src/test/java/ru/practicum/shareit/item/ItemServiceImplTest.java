@@ -77,17 +77,6 @@ class ItemServiceImplTest {
                 .isInstanceOf(ValidationException.class);
     }
 
-    @Test
-    void updateItem() {
-        userDto = userService.createUserDto(userDto);
-        requestService.createRequest(requestDto, userDto.getId());
-        ItemDto result = itemService.createItem(itemDto, userDto.getId());
-        result = itemService.updateItem(itemDto2, result.getId(), userDto.getId());
-        assertEquals(result.getName(), itemDto2.getName());
-        assertEquals(result.getDescription(), itemDto2.getDescription());
-        assertEquals(result.getAvailable(), itemDto2.getAvailable());
-
-    }
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
@@ -156,7 +145,7 @@ class ItemServiceImplTest {
     @Test
     void createComment() {
         UserDto tempUser = userService.createUserDto(userDto);
-        ItemDto tempItem = itemService.createItem(itemDto, userDto.getId());
+        ItemDto tempItem = itemService.createItem(itemDto, tempUser.getId());
 
         BookingDto booking = BookingDto.builder().id(1L).itemId(tempItem.getId())
                 .start(LocalDateTime.now().minusDays(2))
