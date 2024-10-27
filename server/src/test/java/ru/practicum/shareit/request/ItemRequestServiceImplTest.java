@@ -21,6 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 class ItemRequestServiceImplTest {
 
@@ -53,7 +54,6 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void getUserItemRequests() {
         ItemRequestDto result = itemRequestService.createRequest(itemRequest, userDto.getId());
         ItemRequestDto result2 = itemRequestService.createRequest(itemRequest2, userDto.getId());

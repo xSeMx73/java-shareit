@@ -33,6 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
 @SpringBootTest
 class ItemServiceImplTest {
@@ -151,7 +152,7 @@ class ItemServiceImplTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+
     @Test
     void createComment() {
         UserDto tempUser = userService.createUserDto(userDto);
