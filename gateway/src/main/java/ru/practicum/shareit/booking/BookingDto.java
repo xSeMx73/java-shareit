@@ -1,12 +1,13 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.annotations.DateValidAnnotation;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -19,9 +20,9 @@ public class BookingDto {
 	@NotNull
 	@Positive
 	private long itemId;
-	@DateValidAnnotation
+	@FutureOrPresent
 	private LocalDateTime start;
-	@DateValidAnnotation
+	@Future
 	private LocalDateTime end;
 
 	public enum BookingState {
