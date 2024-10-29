@@ -11,6 +11,6 @@ public class DateValid implements ConstraintValidator<DateValidAnnotation, Local
 
     @Override
     public boolean isValid(LocalDateTime value, ConstraintValidatorContext context) {
-            return value != null && !value.isBefore(LocalDateTime.now());
+            return value != null && !value.isBefore(LocalDateTime.now().plusSeconds(1));
     }
 }

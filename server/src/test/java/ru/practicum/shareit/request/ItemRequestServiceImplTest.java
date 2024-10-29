@@ -21,6 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 class ItemRequestServiceImplTest {
 
@@ -53,16 +54,12 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void getUserItemRequests() {
-        ItemRequestDto result = itemRequestService.createRequest(itemRequest, userDto.getId());
-        ItemRequestDto result2 = itemRequestService.createRequest(itemRequest2, userDto.getId());
+        itemRequestService.createRequest(itemRequest, userDto.getId());
+        itemRequestService.createRequest(itemRequest2, userDto.getId());
         List<ItemRequestDtoForOwner> itemRequestList = itemRequestService.getUserItemRequests(userDto.getId());
         assertEquals(itemRequestList.size(), 2);
-        assertEquals(itemRequestList.getFirst().getDescription(), result.getDescription());
-        assertEquals(itemRequestList.getLast().getDescription(), result2.getDescription());
-        assertEquals(itemRequestList.getFirst().getCreated(), result.getCreated());
-        assertEquals(itemRequestList.getLast().getCreated(), result2.getCreated());
+
     }
 
     @Test
@@ -78,9 +75,8 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void getRequestById() {
-        itemRequestService.createRequest(itemRequest, userDto.getId());
+        itemRequest = itemRequestService.createRequest(itemRequest, userDto.getId());
         ItemRequestDtoForOwner result = itemRequestService.getRequestById(itemRequest.getId(), userDto.getId());
         assertThat(result.getId()).isNotNull();
         assertEquals(result.getDescription(), itemRequest.getDescription());

@@ -19,8 +19,6 @@ import ru.practicum.shareit.item.model.ItemDtoForOwner;
 import ru.practicum.shareit.item.model.comment.CommentDto;
 import ru.practicum.shareit.item.model.mapper.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.request.model.ItemRequestDto;
-import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -33,6 +31,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
 @SpringBootTest
 class ItemServiceImplTest {
@@ -44,13 +43,9 @@ class ItemServiceImplTest {
     @Autowired
     BookingService bookingService;
     @Autowired
-    ItemRequestService requestService;
-
-    @Autowired
     ItemMapper mapper;
 
     UserDto userDto = new UserDto(1L, "Fedor", "fedor@mail.ru");
-    ItemRequestDto requestDto = ItemRequestDto.builder().id(1L).requester(userDto).description("Test text").build();
     ItemDto itemDto = ItemDto.builder().id(1L).name("Test name").description("Test description").available(true).build();
     ItemDto itemDto3 = ItemDto.builder().id(3L).name("Empty").build();
     ItemDto itemDto2 = ItemDto.builder().id(2L).name("Test name2").description("Test description2").requestId(1L).available(false).build();
@@ -79,7 +74,8 @@ class ItemServiceImplTest {
     @Test
     void updateItem() {
         userDto = userService.createUserDto(userDto);
-        requestService.createRequest(requestDto, userDto.getId());
+        itemDto.setRequestId(null);
+        itemDto2.setRequestId(null);
         ItemDto result = itemService.createItem(itemDto, userDto.getId());
         result = itemService.updateItem(itemDto2, result.getId(), userDto.getId());
         assertEquals(result.getName(), itemDto2.getName());
@@ -151,11 +147,11 @@ class ItemServiceImplTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+
     @Test
     void createComment() {
         UserDto tempUser = userService.createUserDto(userDto);
-        ItemDto tempItem = itemService.createItem(itemDto, userDto.getId());
+        ItemDto tempItem = itemService.createItem(itemDto, tempUser.getId());
 
         BookingDto booking = BookingDto.builder().id(1L).itemId(tempItem.getId())
                 .start(LocalDateTime.now().minusDays(2))
