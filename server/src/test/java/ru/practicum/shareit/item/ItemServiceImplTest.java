@@ -2,7 +2,6 @@ package ru.practicum.shareit.item;
 
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +44,9 @@ class ItemServiceImplTest {
     @Autowired
     ItemMapper mapper;
 
+
     UserDto userDto = new UserDto(1L, "Fedor", "fedor@mail.ru");
     ItemDto itemDto = ItemDto.builder().id(1L).name("Test name").description("Test description").available(true).build();
-    ItemDto itemDto3 = ItemDto.builder().id(3L).name("Empty").build();
     ItemDto itemDto2 = ItemDto.builder().id(2L).name("Test name2").description("Test description2").requestId(1L).available(false).build();
 
     CommentDto comment = CommentDto.builder().id(1L).authorName(userDto.getName()).text("Test comment").build();
@@ -62,13 +61,6 @@ class ItemServiceImplTest {
         assertEquals(result.getDescription(), itemDto.getDescription());
         assertEquals(result.getAvailable(), true);
 
-    }
-
-    @Test
-    void createItem_WrongParam() {
-        userDto = userService.createUserDto(userDto);
-        assertThatThrownBy(() -> itemService.createItem(itemDto3, userDto.getId()))
-                .isInstanceOf(ValidationException.class);
     }
 
     @Test

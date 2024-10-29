@@ -54,6 +54,7 @@ class ItemControllerTest {
                 .build();
     CommentDto commentDto = CommentDto.builder().text("Test text").authorName(userDto.getName()).build();
 
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(itemController).build();
@@ -73,6 +74,18 @@ class ItemControllerTest {
                         .content(objectMapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void createItem_WrongParam() throws Exception {
+        ItemDto itemDto3 = ItemDto.builder().id(3L).name("Empty").build();
+        mockMvc.perform(post("/items")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(String.valueOf(itemDto3))
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

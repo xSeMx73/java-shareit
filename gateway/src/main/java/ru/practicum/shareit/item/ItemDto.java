@@ -15,7 +15,7 @@ public class ItemDto {
     @NotBlank
     @Size(max = 150)
     String name;
-    @NotBlank
+    @NotBlank(message = "Описание не может быть пустым")
     @Size(max = 500)
     String description;
     Boolean available;
