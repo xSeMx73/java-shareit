@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -46,9 +45,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(ItemDto itemDto, Long userId) {
-        if (itemDto.getName().isBlank() || itemDto.getDescription() == null || itemDto.getAvailable() == null) {
-            throw new ValidationException("Некорректно заполнены поля");
-        }
         Item item = itemMapper.toItem(itemDto);
         item.setOwner(userMapper.toUser(userService.getUserByIdForCreate(userId)));
         if (itemDto.getRequestId() != null) {

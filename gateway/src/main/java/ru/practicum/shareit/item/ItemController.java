@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<Object> createItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        if (itemDto.getAvailable() == null) {
+            throw new ValidationException("Некорректно заполнены поля");
+        }
         log.info("Добавление вещи - {}", itemDto);
         return itemClient.createItem(itemDto, userId);
     }

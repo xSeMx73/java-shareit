@@ -33,9 +33,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto createBooking(BookingDto bookingDto, Long userId) {
-        if (bookingDto.getStart().isAfter(bookingDto.getEnd()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
-            throw new IllegalArgumentException("Неверно задано время бронирования");
-        }
+
         UserDto booker = userService.getUserById(userId);
         ItemDto itemDto = itemService.getItem(bookingDto.getItemId());
         if (!itemDto.getAvailable()) throw new ItemNotAvailableException("Вещь не доступна для бронирования");

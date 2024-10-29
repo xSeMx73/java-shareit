@@ -21,7 +21,6 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDto createUserDto(UserDto userDto) {
-        if (userDto.getEmail() == null) throw new ValidationException("email должен быть указан");
         if (!validateEmail(userDto.getEmail()))
             throw new ValidationException("Пользователь с таким email уже существует");
         userDto = userMapper.toUserDto(userRepository.save(userMapper.toUser(userDto)));

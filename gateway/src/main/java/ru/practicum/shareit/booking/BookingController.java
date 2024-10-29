@@ -18,6 +18,9 @@ public class BookingController {
 	@PostMapping
 	public ResponseEntity<Object> createBooking(@Valid @RequestBody BookingDto bookingDto,
 												@RequestHeader("X-Sharer-User-Id") Long userId) {
+		if (bookingDto.getStart().isAfter(bookingDto.getEnd()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
+			throw new IllegalArgumentException("Неверно задано время бронирования");
+		}
 		log.info("Создание бронирования : {}", bookingDto);
 		return bookingClient.createBooking(userId, bookingDto);
 	}
